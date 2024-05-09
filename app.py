@@ -151,49 +151,49 @@ def main():
     # height = st.slider("Height", min_value=0.0, max_value=1000.0, value=50.0)
     #####################33
     # Precipitation (Range: 0.0 - 97.2 mm)
-    precipitation = st.number_input("Precipitation (mm)", min_value=0.0, max_value=150.0, value=0.0)
+    precipitation = st.number_input("Precipitation (mm)", value=0.0)
 
-    # Atmospheric Pressure (Range: 852.1 - 1050.0 mb)
-    atmospheric_pressure = st.number_input("Atmospheric Pressure (mb)", min_value=500.0, max_value=1500.0, value=1012.0)
+    # Atmospheric Pressure
+    atmospheric_pressure = st.number_input("Atmospheric Pressure (mb)", value=1012.0)
 
-    # Maximum Air Pressure (Range: 832.0 - 1049.8 hPa)
-    min_air_pressure = st.number_input("Min Air Pressure (hPa)", min_value=500.0, max_value=1200.0, value=1020.0)
-    max_air_pressure = st.number_input("Max Air Pressure (hPa)", min_value=500.0, max_value=1200.0, value=1045.0)
+    # Air Pressure Range
+    min_air_pressure = st.number_input("Min Air Pressure (hPa)", value=1020.0)
+    max_air_pressure = st.number_input("Max Air Pressure (hPa)", value=1045.0)
 
-    # Solar Radiation (Range: 0.0 - 45305.0 KJ/m2)
-    solar_radiation = st.number_input("Solar Radiation (KJ/m2)", min_value=0.0, max_value=50000.0, value=1200.0)
+    # Solar Radiation
+    solar_radiation = st.number_input("Solar Radiation (KJ/m2)", value=1200.0)
 
-    # Maximum Dew Point Temperature (Range: -10.0 - 44.4 °C)
-    min_dew_point = st.number_input("Min Dew Point Temperature (°C)", min_value=-10.0, max_value=50.0, value=10.0)
-    max_dew_point = st.number_input("Max Dew Point Temperature (°C)", min_value=-10.0, max_value=50.0, value=20.0)
+    # Dew Point Temperature Range
+    min_dew_point = st.number_input("Min Dew Point Temperature (°C)", value=10.0)
+    max_dew_point = st.number_input("Max Dew Point Temperature (°C)", value=20.0)
 
-    # Dew Point Temperature (Range: -10.0 - 43.5 °C)
-    dew_point_temperature = st.number_input("Dew Point Temperature (°C)", min_value=-10.0, max_value=50.0, value=15.0)
+    # Dew Point Temperature
+    dew_point_temperature = st.number_input("Dew Point Temperature (°C)", value=15.0)
 
-    # Maximum Relative Humidity (Range: 7.0 - 100.0 %)
-    min_relative_humidity = st.number_input("Min Relative Humidity (%)", min_value=0.0, max_value=100.0, value=30.0)
-    max_relative_humidity = st.number_input("Max Relative Humidity (%)", min_value=0.0, max_value=100.0, value=95.0)
+    # Relative Humidity Range
+    min_relative_humidity = st.number_input("Min Relative Humidity (%)", value=30.0)
+    max_relative_humidity = st.number_input("Max Relative Humidity (%)", value=95.0)
 
-    # Relative Humidity (Range: 7.0 - 100.0 %)
-    relative_humidity = st.number_input("Instant Relative Humidity (%)", min_value=0.0, max_value=100.0, value=55.0)
+    # Relative Humidity
+    relative_humidity = st.number_input("Instant Relative Humidity (%)", value=55.0)
 
-    # Wind Direction (Range: 0.0 - 360.0 degrees)
-    wind_direction = st.number_input("Wind Direction (degrees)", min_value=0.0, max_value=360.0, value=180.0)
+    # Wind Direction
+    wind_direction = st.number_input("Wind Direction (degrees)", value=180.0)
 
-    # Wind Gust (Range: 0.0 - 99.7 m/s)
-    wind_gust = st.number_input("Wind Gust (m/s)", min_value=0.0, max_value=120.0, value=5.0)
+    # Wind Gust
+    wind_gust = st.number_input("Wind Gust (m/s)", value=5.0)
 
-    # Wind Speed (Range: 0.0 - 19.9 m/s)
-    wind_speed = st.number_input("Wind Speed (m/s)", min_value=0.0, max_value=50.0, value=3.0)
+    # Wind Speed
+    wind_speed = st.number_input("Wind Speed (m/s)", value=3.0)
 
-    # Latitude (Range: -12.75055555 - 4.47749999)
-    latitude = st.number_input("Latitude", min_value=-90.000, max_value=90.000, value=0.0)
+    # Latitude
+    latitude = st.number_input("Latitude", value=0.0)
 
-    # Longitude (Range: -72.78666666 - -45.91999999)
-    longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-60.0)
+    # Longitude
+    longitude = st.number_input("Longitude", value=-60.0)
 
-    # Height (Range: 9.92 - 798.0)
-    height = st.number_input("Height", min_value=0.0, max_value=1000.0, value=50.0)
+    # Height
+    height = st.number_input("Height", value=50.0)
 
 
     #############333
