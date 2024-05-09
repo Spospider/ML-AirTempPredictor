@@ -7,6 +7,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 import os
 
 
+
+
 # Function to load the saved model and scaler
 def load_model_and_scaler(model_path, scaler_path):
     with open(model_path, 'rb') as model_file, open(scaler_path, 'rb') as scaler_file:
@@ -60,7 +62,7 @@ def preprocess_categorical_data(raw_data, regions_list):
 if os.path.exists("XGB_weighted_retrain.pkl"):
     model_path = 'XGB_weighted_retrain.pkl'
 else:
-    model_path = 'Final_XGB_weighted_lessdepthnadCrossValidation.pkl'
+    model_path = 'Final_XGB_weighted_lessdepthnadCrossValidation1.pkl'
 
 # model_path = 'Final_XGB_weighted_lessdepthnadCrossValidation.pkl'
 scaler_path = 'standard_scaler.pkl'
@@ -131,13 +133,10 @@ def preprocess_dict(raw_data):
 
     # Now pass the ordered numerical_data to the preprocess_numerical_data function
     scaled_df = preprocess_numerical_data(numerical_data, scaler)
-    print(scaled_df)
     region_encoded = preprocess_categorical_data(region_data, regions_list)
 
     # Combine scaled numerical data with one-hot encoded data
     preprocessed_data = pd.concat([scaled_df, region_encoded], axis=1)
-    print("after")
-    print(preprocessed_data)
     
     # Ensure the preprocessed data has the same columns as the training data
     preprocessed_data = preprocessed_data.reindex(columns=feature_names, fill_value=0)
@@ -171,82 +170,78 @@ preprocessed_data = preprocessed_data.reindex(columns=feature_names, fill_value=
 
 def predict(data):
     preprocessed_data = preprocess_dict(data)
-    predictions = model.predict(DMatrix(preprocessed_data))
+    try:
+        predictions = model.predict(preprocessed_data)
+    except:
+        predictions = model.predict(DMatrix(preprocessed_data))
     return predictions
 # # Use the model to predict
 # predictions = model.predict(preprocessed_data)
 
 # # Output the prediction
 # print("Predicted values:", predictions)32.59°
-
+import xgboost as xgb
 from xgboost import DMatrix, train
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import mean_squared_error, r2_score
 
 def retrain_model():
-    # Load existing data from the CSV file
+    # return
+    # Load and preprocess the new dataset
     existing_data = pd.read_csv('newdataset.csv')
 
-    # Combine existing data with new data
-    combined_data = preprocess_dict(pd.read_csv('newdataset.csv'))  # Add your logic here to fetch new data
-    # combined_data = pd.concat([existing_data, new_data])
-    combined_data.fillna(0)
-    print(combined_data)
+    # Assuming `preprocess_dict` is your custom function for data processing
+    combined_data = preprocess_dict(existing_data)
+
+    # Replace missing values with zeros (or another approach suitable for your data)
+    combined_data.fillna(0, inplace=True)
+
     # Split the dataset into features (X) and target variable (y)
     X = combined_data.drop(columns=['Air temperature (instant) in celsius degrees'])  # Features
     y = combined_data['Air temperature (instant) in celsius degrees']  # Target variable
 
-    # Define temperature periphery ranges
-    lower_periphery = -10
-    upper_periphery = 10
-    lower_extreme = 40
-    upper_extreme = 50
+    # Initialize DMatrix for the new data
+    dtrain_new = xgb.DMatrix(X, label=y)
 
-    # Initialize weights for all samples
-    weights = np.ones(len(y))
+    # Load the existing model if available
+    try:
+        with open('Final_XGB_weighted_lessdepthnadCrossValidation1.pkl', 'rb') as file:
+            existing_model = pickle.load(file)
+    except FileNotFoundError:
+        print("Initial model not found. Train a base model first.")
+        return
 
-    # Assign higher weights to peripheral temperature regions
-    weights[(y >= lower_periphery) & (y <= upper_periphery)] = 10.0
-    weights[(y >= lower_extreme) & (y <= upper_extreme)] = 10.0
+    # Set XGBoost training parameters
+    print(type(existing_model))
+    params = {
+        'objective': 'reg:squarederror',
+        'eval_metric': 'rmse',
+        'max_depth': 12,
+        'eta': 0.1,
+        'random_state': 42
+    }
 
-    # Convert the continuous target variable into categorical bins
-    bins = [-10, 20, 30, np.inf]
-    labels = ['Very Cold to Moderate', 'Moderate to Warm', 'Warm to Hot']
-    y_bins = pd.cut(y, bins=bins, labels=labels)
+    # Update the model with the new data (retrain without cross-validation)
+    num_boost_round = 10  # Number of boosting rounds to update
+    updated_model = xgb.train(
+        params,
+        dtrain_new,
+        num_boost_round=num_boost_round,
+        xgb_model=existing_model
+    )
 
-    # Perform stratified cross-validation
-    skf = StratifiedKFold(n_splits=5, random_state=42, shuffle=True)
-    mse_scores = []
-    r2_scores = []
+    # Make predictions with the updated model
+    predictions = updated_model.predict(dtrain_new)
 
-    for train_index, test_index in skf.split(X, y_bins):
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-        weights_train = weights[train_index]
+    # Calculate and print performance metrics for the new dataset
+    mse = mean_squared_error(y, predictions)
+    r2 = r2_score(y, predictions)
 
-        dtrain = DMatrix(X_train, label=y_train, weight=weights_train)
-        dtest = DMatrix(X_test, label=y_test)
+    print(f"Mean Squared Error (MSE) for updated model: {mse}")
+    print(f"R-squared (R2) for updated model: {r2}")
 
-        params = {
-            'objective': 'reg:squarederror',
-            'random_state': 42,
-            'max_depth': 12,
-        }
-
-        num_rounds = 20
-
-        bst = train(params, dtrain, num_rounds, evals=[(dtest, 'eval')], verbose_eval=False)
-
-        y_pred = bst.predict(dtest)
-
-        mse_scores.append(mean_squared_error(y_test, y_pred))
-        r2_scores.append(r2_score(y_test, y_pred))
-
-    print("Mean Squared Error (MSE) For XGBoost with Weighted Samples:", np.mean(mse_scores))
-    print("R-squared (R2) For XGBoost with Weighted Samples:", np.mean(r2_scores))
-
-    # Save the model with pickle
+    # Save the updated model with pickle
     with open('XGB_weighted_retrain.pkl', 'wb') as file:
-        pickle.dump(bst, file)
+        pickle.dump(updated_model, file)
 
     print("Model retraining completed.")

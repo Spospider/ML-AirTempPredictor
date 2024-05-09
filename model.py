@@ -5,6 +5,13 @@ import os
 from model_flow import retrain_model
 
 
+RETRAINING_THRESH = 5
+
+from datetime import datetime, timedelta
+
+reference_point = datetime(2024, 5, 5, 12, 0)
+RetrainDuration = timedelta(days=7)
+
 Features = ['hour', 
             'Amount of precipitation in millimeters (last hour)', 
             'Atmospheric pressure at station level (mb)', 
@@ -157,7 +164,7 @@ def append_training_data(data):
 datacounter = 0
 
 
-def fetch_real_weather_data(input_data):
+def fetch_real_weather_data(input_data, log_data=False):
 
     global true_temp
     global datacounter
@@ -167,7 +174,7 @@ def fetch_real_weather_data(input_data):
     longitude = input_data['longitude']
 
     response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={openWeatherAPIKey}&units=metric")
-    print(response.status_code, response.text)
+    # print(response.status_code, response.text)
 
     data = response.json()
     true_temp = data['main']['temp']
@@ -209,10 +216,49 @@ def fetch_real_weather_data(input_data):
         new_datapoint['Amount of precipitation in millimeters (last hour)'] = data['rain']['1h'] + snow
     else:
         new_datapoint['Amount of precipitation in millimeters (last hour)'] = input_data['precipitation']
+    if log_data:
+        append_training_data(new_datapoint)
+        datacounter +=1
+
+        if datetime.now() >= RetrainDuration+reference_point:
+            retrain_model()
+
+        # if datacounter % RETRAINING_THRESH == 0:
+        #     retrain_model()
+    return true_temp
+
+def log_datapoint(input_data):
+    global true_temp
+    global datacounter
+    new_datapoint = {
+        'hour': [input_data['hour']],
+        'Atmospheric pressure at station level (mb)': [input_data['atmospheric_pressure']],
+        'Maximum air pressure for the last hour in hPa to tenths': [input_data['max_air_pressure']],
+        'Minimum air pressure for the last hour in hPa to tenths': [input_data['min_air_pressure']],
+        'Solar radiation KJ/m2': [input_data['solar_radiation']],
+        'Dew point temperature (instant) in celsius degrees': [input_data['dew_point_temperature']],
+        'Maximum dew point temperature for the last hour in celsius degrees': [input_data['max_dew_point']],
+        'Minimum dew point temperature for the last hour in celsius degrees': [input_data['min_dew_point']],
+        'Maximum relative humidity temperature for the last hour in %': [input_data['max_relative_humidity']],
+        'Minimum relative humidity temperature for the last hour in %': [input_data['min_relative_humidity']],
+        'Relative humidity in % (instant)': [input_data['relative_humidity']],
+        'Wind direction in radius degrees (0-360)': [input_data['wind_direction']],
+        'Wind gust in meters per second': [input_data['wind_gust']],
+        'Wind speed in meters per second': [input_data['wind_speed']],
+        'latitude': [input_data['latitude']],
+        'longitude': [input_data['longitude']],
+        'height': [input_data['height']],
+        'year': [input_data['year']],
+        'month': [input_data['month']],
+        'day': [input_data['day']],
+        'region': [input_data['region']],
+        'Air temperature (instant) in celsius degrees': true_temp
+    }
     append_training_data(new_datapoint)
     datacounter +=1
 
-    if datacounter % 50 == 0:
+    if datetime.now() >= RetrainDuration+reference_point:
         retrain_model()
+    # if datacounter % RETRAINING_THRESH == 0:
+    #     retrain_model()
     return true_temp
-
