@@ -36,7 +36,6 @@ colorama==0.4.6
 comm==0.2.2
 contextlib2==21.6.0
 cryptography==42.0.5
-dataclasses-json==0.6.4
 dataclasses-json-speakeasy==0.5.11
 datasets==2.19.0
 debugpy==1.8.1
