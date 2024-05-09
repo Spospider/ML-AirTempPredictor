@@ -5,7 +5,7 @@ import streamlit as st
 from datetime import time, datetime
 
 from model import fetch_real_weather_data, temp, true_temp
-
+from model_flow import predict
 st.markdown(
     r"""
     <style>
@@ -16,18 +16,57 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
+def dict_to_list_of_lists(input_data):
+    output_data = {}
+    for key, value in input_data.items():
+        output_data[key] = [value]
+    return output_data
+
+def map_keys(input_data):
+    key_mapping = {
+        'hour': 'hour',
+        'precipitation': 'Amount of precipitation in millimeters (last hour)',
+        'atmospheric_pressure': 'Atmospheric pressure at station level (mb)',
+        'max_air_pressure': 'Maximum air pressure for the last hour in hPa to tenths',
+        'min_air_pressure': 'Minimum air pressure for the last hour in hPa to tenths',
+        'solar_radiation': 'Solar radiation KJ/m2',
+        'dew_point_temperature': 'Dew point temperature (instant) in celsius degrees',
+        'max_dew_point': 'Maximum dew point temperature for the last hour in celsius degrees',
+        'min_dew_point': 'Minimum dew point temperature for the last hour in celsius degrees',
+        'max_relative_humidity': 'Maximum relative humidity temperature for the last hour in %',
+        'min_relative_humidity': 'Minimum relative humidity temperature for the last hour in %',
+        'relative_humidity': 'Relative humidity in % (instant)',
+        'wind_direction': 'Wind direction in radius degrees (0-360)',
+        'wind_gust': 'Wind gust in meters per second',
+        'wind_speed': 'Wind speed in meters per second',
+        'latitude': 'latitude',
+        'longitude': 'longitude',
+        'height': 'height',
+        'year': 'year',
+        'month': 'month',
+        'day': 'day',
+        'region': 'region'
+    }
+
+    mapped_data = {}
+    for key in input_data:
+        mapped_data[key_mapping[key]] = input_data[key]
+    return mapped_data
+
 
 def main():
     global true_temp
     st.title("Outdoor Air Temperature Predictor")
 
     st.text("Predicted Temperature:")
-    display = f"""
-    <h1 style="text-align:center; font-size:5rem;">{str(temp)}°</h1>
-    """
-    st.markdown(display, unsafe_allow_html=True)
+    predtmp_field = st.empty()
+    with predtmp_field.container():
+        display = f"""
+        <h1 style="text-align:center; font-size:5rem;">--°</h1>
+        """
+        st.markdown(display, unsafe_allow_html=True)
 
-    st.text("Real Temperature:")
+    st.text("Real Temperature: (Based on Longitude and Latitude only)")
     
     realtmp_field = st.empty()
     
@@ -141,9 +180,16 @@ def main():
 
     if process:
         newtmp = fetch_real_weather_data(input_data)
+        pred = predict(dict_to_list_of_lists(map_keys(input_data)))[0]
         with realtmp_field.container():
             display = f"""
             <h1 style="text-align:center; font-size:5rem;">{str(newtmp)}°</h1>
+            """
+            st.markdown(display, unsafe_allow_html=True)
+
+        with predtmp_field.container():
+            display = f"""
+            <h1 style="text-align:center; font-size:5rem;">{str(pred)}°</h1>
             """
             st.markdown(display, unsafe_allow_html=True)
 

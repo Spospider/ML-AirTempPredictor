@@ -1,3 +1,7 @@
-hour,Atmospheric pressure at station level (mb),Maximum air pressure for the last hour in hPa to tenths,Minimum air pressure for the last hour in hPa to tenths,Solar radiation KJ/m2,Dew point temperature (instant) in celsius degrees,Maximum dew point temperature for the last hour in celsius degrees,Minimum dew point temperature for the last hour in celsius degrees,Maximum relative humidity temperature for the last hour in %,Minimum relative humidity temperature for the last hour in %,Relative humidity in % (instant),Wind direction in radius degrees (0-360),Wind gust in meters per second,Wind speed in meters per second,latitude,longitude,height,year,month,day,region,temperature,Amount of precipitation in millimeters (last hour)
-4,1009,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,100,313,1.2,0.54,0.0,-60.0,50.0,2024,5,7,AM,21.97,0.0
-4,1009,1127.41,1020.03,1200.0,15.0,20.0,10.0,95.0,30.0,100,313,1.2,0.54,0.0,-60.0,50.0,2024,5,7,AM,21.97,0.0
+11,1011,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,54,107,4.63,1.9,0.0,-60.0,50.0,2024,5,9,AM,32.59,0.0
+11,1011,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,54,107,4.63,1.9,0.0,-60.0,50.0,2024,5,9,AM,32.59,0.0
+11,1011,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,54,107,4.63,1.9,0.0,-60.0,50.0,2024,5,9,AM,32.59,0.0
+11,1011,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,54,107,4.63,1.9,0.0,-60.0,50.0,2024,5,9,AM,32.59,37.07
+12,1010,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,78,95,6.86,5.99,0.0,-47.05,50.0,2024,5,9,AM,28.26,37.07
+12,1010,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,78,95,6.86,5.99,0.0,-47.05,50.0,2024,5,9,AM,28.26,0.0
+11,1011,1045.0,1020.0,1200.0,15.0,20.0,10.0,95.0,30.0,54,107,4.63,1.9,0.0,-60.0,50.0,2024,5,9,AM,32.59,0.0
