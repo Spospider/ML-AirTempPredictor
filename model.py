@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from datetime import datetime, timedelta
 import os
+from model_flow import retrain_model
 
 
 Features = ['hour', 
@@ -27,6 +28,12 @@ Features = ['hour',
             'day', 
             'region']
 
+try:
+    New_Dataset = pd.read_csv('newdataset.csv')
+except:
+    New_Dataset = pd.DataFrame(columns=Features)
+if sorted(New_Dataset.columns) == sorted(Features):
+    New_Dataset = pd.DataFrame(columns=Features)
 
 # Value ranges
 # hour, Range: [00:00 - 23:00]
@@ -127,10 +134,13 @@ def append_training_data(data):
     Returns:
         None
     """
+    global New_Dataset
     csv_path = 'newdataset.csv'
     # Convert data to DataFrame if it's not already
     if not isinstance(data, pd.DataFrame):
         data = pd.DataFrame(data)
+
+    New_Dataset = pd.concat([New_Dataset, data])
 
     # Check if the CSV file exists
     file_exists = os.path.exists(csv_path)
@@ -138,15 +148,19 @@ def append_training_data(data):
     # Append data to existing CSV file or create a new one
     mode = 'a' if file_exists else 'w'
     header = not file_exists  # Write header only if the file is new
-
-    with open(csv_path, mode, newline='') as file:
-        data.to_csv(file, header=header, index=False)
+    # print(New_Dataset.head())
+    with open(csv_path, 'w') as file:
+        New_Dataset.to_csv(file, index=False)
 
     print(f"Data appended to {csv_path} successfully.")
+
+datacounter = 0
+
 
 def fetch_real_weather_data(input_data):
 
     global true_temp
+    global datacounter
     # https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}id&appid={API key}
     # http://api.openweathermap.org/data/2.5/forecast?id=524901&appid={API key}
     latitude = input_data['latitude']
@@ -188,7 +202,7 @@ def fetch_real_weather_data(input_data):
         'month': [month],
         'day': [day],
         'region': [input_data['region']],
-        'temperature' : true_temp
+        'Air temperature (instant) in celsius degrees' : true_temp
     }
     if data.get('rain'):
         snow = data.get('snow', {}).get('1h', 0)
@@ -196,5 +210,9 @@ def fetch_real_weather_data(input_data):
     else:
         new_datapoint['Amount of precipitation in millimeters (last hour)'] = input_data['precipitation']
     append_training_data(new_datapoint)
+    datacounter +=1
+
+    if datacounter > 2:
+        retrain_model()
     return true_temp
 

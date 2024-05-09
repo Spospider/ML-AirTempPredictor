@@ -6,15 +6,15 @@ from datetime import time, datetime
 
 from model import fetch_real_weather_data, temp, true_temp
 from model_flow import predict
-st.markdown(
-    r"""
-    <style>
-    .stDeployButton {
-            visibility: hidden;
-        }
-    </style>
-    """, unsafe_allow_html=True
-)
+# st.markdown(
+#     r"""
+#     <style>
+#     .stDeployButton {
+#             visibility: hidden;
+#         }
+#     </style>
+#     """, unsafe_allow_html=True
+# )
 
 def dict_to_list_of_lists(input_data):
     output_data = {}
