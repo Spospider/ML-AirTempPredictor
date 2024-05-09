@@ -212,7 +212,7 @@ def fetch_real_weather_data(input_data):
     append_training_data(new_datapoint)
     datacounter +=1
 
-    if datacounter > 2:
+    if datacounter % 50 == 0:
         retrain_model()
     return true_temp
 

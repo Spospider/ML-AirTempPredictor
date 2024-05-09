@@ -72,7 +72,7 @@ def main():
     
     with realtmp_field.container():
         display = f"""
-        <h1 style="text-align:center; font-size:5rem;">{str(true_temp)}°</h1>
+        <h1 style="text-align:center; font-size:5rem;">--°</h1>
         """
         st.markdown(display, unsafe_allow_html=True)
 
@@ -151,7 +151,7 @@ def main():
     # Height (Range: 9.92 - 798.0)
     height = st.slider("Height", min_value=0.0, max_value=1000.0, value=50.0)
 
-    state = st.selectbox("State", ['AC', 'AM', 'AP', 'PA', 'RO', 'RR', 'TO'], index = 1)
+    state = st.selectbox("State", ['state_AC', 'state_AM', 'state_AP', 'state_PA', 'state_RO', 'state_RR', 'state_TO'], index = 1)
 
     input_data = {
         "hour": hour,

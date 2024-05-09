@@ -19,9 +19,13 @@ def one_hot_encode_region(region, regions_list):
     # Ensure the prefix 'state_' is added if not present in user input
     if not region.startswith('state_'):
         region = f'state_{region}'
+    # else:
+    #     x = pd.DataFrame([{f'{r}': 0 for r in regions_list}])
+    #     return pd.DataFrame([{f'{r}': 0 for r in regions_list}])
+
 
     # Initialize all region columns to zero
-    region_encoding = {f'state_{r}': 0 for r in regions_list}
+    region_encoding = {f'{r}': 0 for r in regions_list}
 
     # Set the appropriate region to 1
     region_encoding[region] = 1
@@ -127,14 +131,18 @@ def preprocess_dict(raw_data):
 
     # Now pass the ordered numerical_data to the preprocess_numerical_data function
     scaled_df = preprocess_numerical_data(numerical_data, scaler)
-
+    print(scaled_df)
     region_encoded = preprocess_categorical_data(region_data, regions_list)
 
     # Combine scaled numerical data with one-hot encoded data
     preprocessed_data = pd.concat([scaled_df, region_encoded], axis=1)
+    print("after")
+    print(preprocessed_data)
     
     # Ensure the preprocessed data has the same columns as the training data
     preprocessed_data = preprocessed_data.reindex(columns=feature_names, fill_value=0)
+    # preprocessed_data = pd.get_dummies(preprocessed_data, columns=['region'], prefix='state')
+
     if 'Air temperature (instant) in celsius degrees' in raw_data:
         preprocessed_data['Air temperature (instant) in celsius degrees'] = raw_data['Air temperature (instant) in celsius degrees']
     return preprocessed_data
@@ -163,7 +171,7 @@ preprocessed_data = preprocessed_data.reindex(columns=feature_names, fill_value=
 
 def predict(data):
     preprocessed_data = preprocess_dict(data)
-    predictions = model.predict(preprocessed_data)
+    predictions = model.predict(DMatrix(preprocessed_data))
     return predictions
 # # Use the model to predict
 # predictions = model.predict(preprocessed_data)
