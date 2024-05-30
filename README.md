@@ -1,6 +1,9 @@
 # Outdoor Air Temperature Prediction Utitily Application
 
-## Setup
+## Try it out
+https://temppredictor.streamlit.app
+
+## LocalSetup
 1. Create a venv (1st time only)
 ```bash
 python -m venv venv
