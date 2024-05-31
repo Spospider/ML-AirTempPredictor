@@ -1,4 +1,9 @@
-# Outdoor Air Temperature Prediction Utitily Application
+# Outdoor Air Temperature Prediction Model
+
+## Model Used
+XG-Boost Regressor with a gustom gain function (to handle extreme temp. traiding data points)
+## Dataset Used 
+[Climate Weather Surface of Brazil - Hourly (North)](https://www.kaggle.com/datasets/PROPPG-PPG/hourly-weather-surface-brazil-southeast-region/data)
 
 ## Try it out
 https://temppredictor.streamlit.app
